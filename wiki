@@ -2,4 +2,5 @@ Nearest centroid classifier
 k-means clustering
 K-means++
 Derivative
+Centroid
 https://www.numberempire.com/
