@@ -1,0 +1,3 @@
+Nearest centroid classifier
+k-means clustering
+K-means++
