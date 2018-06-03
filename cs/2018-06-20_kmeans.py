@@ -1,7 +1,9 @@
+import copy
 import csv
 import itertools
 import operator
-import matplotlib.pyplot
+import numpy as np
+import matplotlib.pyplot as plot
 
 def load_irisdata(col1, col2, filename='iris-dataset.csv'):
     COLS = list(range(0, 4))
@@ -42,8 +44,24 @@ def plot(dats):
         x, y = [p[0] for p in points], [p[1] for p in points]
         plotargs += [x, y, fmt]
         
-    matplotlib.pyplot.plot(*plotargs)
-    matplotlib.pyplot.show()
+    plt.plot(*plotargs)
+    plt.show()
+
+def kmeans_iter(points, means,
+                dist = lambda a, b: (a[0]-b[0])**2+(a[1]-b[1])**2):
+    k_cnt = len(means)
+    groups = [[] for i in range(0, k_cnt)]
+    
+    for point in points:
+        dists = [dist(means[i], point) for i in range(0, k_cnt)]
+        mindist = min(dists)
+        argmin = dists.index(mindist)
+        groups[argmin].append(point)
+
+    return groups
+
+def calc_means(groups):
+    
 
 if __name__ == '__main__':
     testdats = []
