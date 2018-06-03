@@ -74,6 +74,31 @@ def means_equal(m1, m2, delta=0.01):
             return False
     return True
 
+def illustrate(i, ti, pdfout):
+    title = 'test data #{}'.format(i)
+    print(title)
+    plot([ti], title, pdfout)
+    xmax, xmin = max(getd(ti, 0)), min(getd(ti, 0))
+    ymax, ymin = max(getd(ti, 1)), min(getd(ti, 1))
+    means = [[random.uniform(xmin, xmax),
+              random.uniform(ymin, ymax)]
+             for i in range(0, K_CNT)]
+    itercnt = 0
+
+    while True:
+        groups = kmeans_iter(ti, means)
+        itercnt = itercnt+1
+        title = 'iter #{}'.format(itercnt)
+        print(title)
+        newmeans = calc_means(groups)
+
+        if means_equal(means, newmeans):
+            break
+
+        means = newmeans
+        print('new means: {}'.format(newmeans))
+        plot(groups + [[i] for i in newmeans], title, pdfout)
+
 if __name__ == '__main__':
     K_CNT = 3
     testdats = []
@@ -85,29 +110,7 @@ if __name__ == '__main__':
             testdats.append(dat)
             
     for i, ti in enumerate(testdats):
-        title = 'test data #{}'.format(i)
-        print(title)
-        plot([ti], title, pdfout)
-        xmax, xmin = max(getd(ti, 0)), min(getd(ti, 0))
-        ymax, ymin = max(getd(ti, 1)), min(getd(ti, 1))
-        means = [[random.uniform(xmin, xmax),
-                  random.uniform(ymin, ymax)]
-                 for i in range(0, K_CNT)]
-        itercnt = 0
-
-        while True:
-            groups = kmeans_iter(ti, means)
-            itercnt = itercnt+1
-            title = 'iter #{}'.format(itercnt)
-            print(title)
-            newmeans = calc_means(groups)
-
-            if means_equal(means, newmeans):
-                break
-
-            means = newmeans
-            print('new means: {}'.format(newmeans))
-            plot(groups + [[i] for i in newmeans], title, pdfout)
+        illustrate(i, ti, pdfout)
 
     pdfout.close()
 
