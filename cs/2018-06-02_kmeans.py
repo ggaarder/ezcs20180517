@@ -101,6 +101,7 @@ def illustrate(i, ti, pdfout):
 
 if __name__ == '__main__':
     K_CNT = 3
+    TRIES = 3
     testdats = []
     pdfout = PdfPages('kmeans.pdf')
     
@@ -110,10 +111,12 @@ if __name__ == '__main__':
             testdats.append(dat)
             
     for i, ti in enumerate(testdats):
-        try:
-            illustrate(i, ti, pdfout)
-        except Exception as ex:
-            print(ex)
+        for try_cnt in range(0, TRIES):
+            try:
+                illustrate(i, ti, pdfout)
+                break
+            except Exception as ex:
+                print('Exception: ', ex)
 
     pdfout.close()
 
