@@ -6,6 +6,7 @@ import operator
 import numpy as np
 import numpy.matlib
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 
 def load_irisdata(col1, col2, filename='iris-dataset.csv'):
     COLS = list(range(0, 4))
@@ -27,7 +28,7 @@ FMTS = [operator.add(*i) # concat string
         for i in itertools.product(COLOURS, MARKERS)]
 random.shuffle(FMTS)
 
-def plot(dats):
+def plot(dats, pdfout=None):
     """dats = [[[x1, y1], [x2, y2], ...],  (group1)
                [[x1, y1], [x2, y2], ...],  (group2)
                [[x1, y1], [x2, y2], ...],  (group3)
@@ -45,7 +46,10 @@ def plot(dats):
         plotargs += [x, y, fmt]
         
     plt.plot(*plotargs)
-    plt.show()
+    if not pdfout:
+        plt.show()
+    else:
+        pdfout.savefig()
 
 def kmeans_iter(points, means,
                 dist = lambda a, b: (a[0]-b[0])**2+(a[1]-b[1])**2):
@@ -63,7 +67,7 @@ def kmeans_iter(points, means,
 def calc_means(groups):
     return [list(np.mean(group, axis=0)) for group in groups]
 
-def means_equal(m1, m2, delta=0.00001):
+def means_equal(m1, m2, delta=0.01):
     for (p1, p2) in zip(m1, m2):
         if abs(p1[0]-p2[0]) > delta or abs(p1[1]-p2[1]) > delta:
             return False
@@ -72,15 +76,16 @@ def means_equal(m1, m2, delta=0.00001):
 if __name__ == '__main__':
     K_CNT = 3
     testdats = []
+    pdfout = PdfPages('kmeans.pdf')
     
     for col1 in range(0, 4):
         for col2 in range(col1+1, 4):
             dat = load_irisdata(col1, col2)
             testdats.append(dat)
-
+            
     for i, ti in enumerate(testdats):
         print('test data #{}'.format(i))
-        plot([ti])
+        plot([ti], pdfout)
         xmax, xmin = max(getd(ti, 0)), min(getd(ti, 0))
         ymax, ymin = max(getd(ti, 1)), min(getd(ti, 1))
         means = [[random.uniform(xmin, xmax),
@@ -99,4 +104,7 @@ if __name__ == '__main__':
 
             means = newmeans
             print('new means: {}'.format(newmeans))
-            plot(groups + [[i] for i in newmeans])
+            plot(groups + [[i] for i in newmeans], pdfout)
+
+    pdfout.close()
+            
