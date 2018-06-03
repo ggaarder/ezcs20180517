@@ -23,14 +23,9 @@ def getd(points, dimension):
     return [p[dimension] for p in points]
 
 COLOURS, MARKERS = 'kbgrcmy', 'ov^<>1234sp*hH+xDd|_'
-FMTS = sorted([operator.add(*i)
-               for i in itertools.product(COLOURS, MARKERS)],
-              # sorted to let formats of same colours but different markers
-              # come firstly, instead same markers but different colours
-              # i.e. 'k.' 'k,' 'ko' ... instead of 'k.' 'b.' 'g.' ...
-              key = lambda c: abs(ord(c[0])-ord('k'))
-              # 'k' (black) comes first
-)
+FMTS = [operator.add(*i) # concat string
+        for i in itertools.product(COLOURS, MARKERS)]
+random.shuffle(FMTS)
 
 def plot(dats):
     """dats = [[[x1, y1], [x2, y2], ...],  (group1)
@@ -68,6 +63,12 @@ def kmeans_iter(points, means,
 def calc_means(groups):
     return [list(np.mean(group, axis=0)) for group in groups]
 
+def means_equal(m1, m2, delta=0.00001):
+    for (p1, p2) in zip(m1, m2):
+        if abs(p1[0]-p2[0]) > delta or abs(p1[1]-p2[1]) > delta:
+            return False
+    return True
+
 if __name__ == '__main__':
     K_CNT = 3
     testdats = []
@@ -86,15 +87,16 @@ if __name__ == '__main__':
                   random.uniform(ymin, ymax)]
                  for i in range(0, K_CNT)]
         itercnt = 0
-        
+
         while True:
             groups = kmeans_iter(ti, means)
             itercnt = itercnt+1
             print('iter #{}'.format(itercnt))
             newmeans = calc_means(groups)
-            
-            if sorted(means) == sorted(newmeans):
+
+            if means_equal(means, newmeans):
                 break
 
             means = newmeans
+            print('new means: {}'.format(newmeans))
             plot(groups + [[i] for i in newmeans])
