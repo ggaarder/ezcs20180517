@@ -3,21 +3,6 @@ import itertools
 import operator
 import matplotlib.pyplot
 
-testdats = [
-    [[1, 1],
-     [1, 2],
-     [2, 4],
-     [15, 15],
-     [19, 20]],
-    [[1, 1],
-     [1, 2],
-     [39, 40],
-     [38, 26],
-     [155, 200],
-     [180, 253],
-     [190, 198]],
-]
-
 def load_irisdata(col1, col2, filename='iris-dataset.csv'):
     COLS = list(range(0, 4))
     if not col1 in COLS or not col2 in COLS:
@@ -27,8 +12,8 @@ def load_irisdata(col1, col2, filename='iris-dataset.csv'):
     with open(filename, newline='') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
-            dat.push([row[col1], row[col2]])
-    testdats.push(dat)
+            dat.append([row[col1], row[col2]])
+    return dat
 
 COLOURS, MARKERS = 'kbgrcmy', 'ov^<>1234sp*hH+xDd|_'
 FMTS = sorted([operator.add(*i)
@@ -60,5 +45,12 @@ def plot(dats):
     matplotlib.pyplot.plot(*plotargs)
     matplotlib.pyplot.show()
 
-load_irisdata(0, 1)
-plot(testdats)
+if __name__ == '__main__':
+    testdats = []
+    
+    for col1 in range(0, 4):
+        for col2 in range(col1+1, 4):
+            dat = load_irisdata(col1, col2)
+            testdats.append(dat)
+
+    plot(testdats)
