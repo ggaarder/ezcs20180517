@@ -110,7 +110,10 @@ if __name__ == '__main__':
             testdats.append(dat)
             
     for i, ti in enumerate(testdats):
-        illustrate(i, ti, pdfout)
+        try:
+            illustrate(i, ti, pdfout)
+        except Exception as ex:
+            print(ex)
 
     pdfout.close()
 
