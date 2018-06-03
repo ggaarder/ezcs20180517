@@ -69,7 +69,7 @@ def kmeans_iter(points, means,
 def calc_means(groups):
     return [list(np.mean(group, axis=0)) for group in groups]
 
-def means_equal(m1, m2, delta=0.01):
+def means_equal(m1, m2, delta=0.1):
     for (p1, p2) in zip(m1, m2):
         if abs(p1[0]-p2[0]) > delta or abs(p1[1]-p2[1]) > delta:
             return False
