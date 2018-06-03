@@ -1,9 +1,11 @@
 import copy
 import csv
+import random
 import itertools
 import operator
 import numpy as np
-import matplotlib.pyplot as plot
+import numpy.matlib
+import matplotlib.pyplot as plt
 
 def load_irisdata(col1, col2, filename='iris-dataset.csv'):
     COLS = list(range(0, 4))
@@ -14,8 +16,11 @@ def load_irisdata(col1, col2, filename='iris-dataset.csv'):
     with open(filename, newline='') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
-            dat.append([row[col1], row[col2]])
+            dat.append([float(row[col1]), float(row[col2])])
     return dat
+
+def getd(points, dimension):
+    return [p[dimension] for p in points]
 
 COLOURS, MARKERS = 'kbgrcmy', 'ov^<>1234sp*hH+xDd|_'
 FMTS = sorted([operator.add(*i)
@@ -41,7 +46,7 @@ def plot(dats):
 
     plotargs = []
     for points, fmt in zip(dats, fmts):
-        x, y = [p[0] for p in points], [p[1] for p in points]
+        x, y = getd(points, 0), getd(points, 1)
         plotargs += [x, y, fmt]
         
     plt.plot(*plotargs)
@@ -61,9 +66,10 @@ def kmeans_iter(points, means,
     return groups
 
 def calc_means(groups):
-    
+    return [list(np.mean(group, axis=0)) for group in groups]
 
 if __name__ == '__main__':
+    K_CNT = 3
     testdats = []
     
     for col1 in range(0, 4):
@@ -71,4 +77,24 @@ if __name__ == '__main__':
             dat = load_irisdata(col1, col2)
             testdats.append(dat)
 
-    plot(testdats)
+    for i, ti in enumerate(testdats):
+        print('test data #{}'.format(i))
+        plot([ti])
+        xmax, xmin = max(getd(ti, 0)), min(getd(ti, 0))
+        ymax, ymin = max(getd(ti, 1)), min(getd(ti, 1))
+        means = [[random.uniform(xmin, xmax),
+                  random.uniform(ymin, ymax)]
+                 for i in range(0, K_CNT)]
+        itercnt = 0
+        
+        while True:
+            groups = kmeans_iter(ti, means)
+            itercnt = itercnt+1
+            print('iter #{}'.format(itercnt))
+            newmeans = calc_means(groups)
+            
+            if sorted(means) == sorted(newmeans):
+                break
+
+            means = newmeans
+            plot(groups + [[i] for i in newmeans])
