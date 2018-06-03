@@ -28,7 +28,7 @@ FMTS = [operator.add(*i) # concat string
         for i in itertools.product(COLOURS, MARKERS)]
 random.shuffle(FMTS)
 
-def plot(dats, pdfout=None):
+def plot(dats, title, pdfout=None):
     """dats = [[[x1, y1], [x2, y2], ...],  (group1)
                [[x1, y1], [x2, y2], ...],  (group2)
                [[x1, y1], [x2, y2], ...],  (group3)
@@ -44,7 +44,8 @@ def plot(dats, pdfout=None):
     for points, fmt in zip(dats, fmts):
         x, y = getd(points, 0), getd(points, 1)
         plotargs += [x, y, fmt]
-        
+
+    plt.title(title)
     plt.plot(*plotargs)
     if not pdfout:
         plt.show()
@@ -84,8 +85,9 @@ if __name__ == '__main__':
             testdats.append(dat)
             
     for i, ti in enumerate(testdats):
-        print('test data #{}'.format(i))
-        plot([ti], pdfout)
+        title = 'test data #{}'.format(i)
+        print(title)
+        plot([ti], title, pdfout)
         xmax, xmin = max(getd(ti, 0)), min(getd(ti, 0))
         ymax, ymin = max(getd(ti, 1)), min(getd(ti, 1))
         means = [[random.uniform(xmin, xmax),
@@ -96,7 +98,8 @@ if __name__ == '__main__':
         while True:
             groups = kmeans_iter(ti, means)
             itercnt = itercnt+1
-            print('iter #{}'.format(itercnt))
+            title = 'iter #{}'.format(itercnt)
+            print(title)
             newmeans = calc_means(groups)
 
             if means_equal(means, newmeans):
@@ -104,7 +107,7 @@ if __name__ == '__main__':
 
             means = newmeans
             print('new means: {}'.format(newmeans))
-            plot(groups + [[i] for i in newmeans], pdfout)
+            plot(groups + [[i] for i in newmeans], title, pdfout)
 
     pdfout.close()
-            
+
