@@ -51,6 +51,7 @@ def plot(dats, title, pdfout=None):
         plt.show()
     else:
         pdfout.savefig()
+    plt.clf()
 
 def kmeans_iter(points, means,
                 dist = lambda a, b: (a[0]-b[0])**2+(a[1]-b[1])**2):
@@ -68,7 +69,7 @@ def kmeans_iter(points, means,
 def calc_means(groups):
     return [list(np.mean(group, axis=0)) for group in groups]
 
-def means_equal(m1, m2, delta=0.01):
+def means_equal(m1, m2, delta=0.5):
     for (p1, p2) in zip(m1, m2):
         if abs(p1[0]-p2[0]) > delta or abs(p1[1]-p2[1]) > delta:
             return False
@@ -109,7 +110,7 @@ if __name__ == '__main__':
         for col2 in range(col1+1, 4):
             dat = load_irisdata(col1, col2)
             testdats.append(dat)
-            
+
     for i, ti in enumerate(testdats):
         for try_cnt in range(0, TRIES):
             try:
